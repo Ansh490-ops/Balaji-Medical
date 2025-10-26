@@ -1,5 +1,5 @@
 const APPS_SCRIPT_URL = "YOUR_WEB_APP_URL"; // Apps Script Web App URL
-const WHATSAPP_NUMBER = "91XXXXXXXXXX"; // apna WhatsApp number
+const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
 
 document.getElementById('sendBtn').onclick = async () => {
   const name = document.getElementById('name').value.trim();
