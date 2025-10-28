@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe8YZ0synShDa1p0-a-KIqq7VjjUwMAhK9aoQH7AQVjLhRwz-bpRCvBPYx0yuzqkN0/exec";
+const APPS_SCRIPT_URL ="https://script.google.com/macros/s/AKfycbyrksPu3t8xSr7xwfWzTOtEfN0aDsVehTENa7Zhx5mF6pJTT96wZYfN_0frtkA5ae_T/exec";
 const WHATSAPP_NUMBER = "918004353261"; // WhatsApp number without '+'
 
 document.getElementById('sendBtn').onclick = async () => {
