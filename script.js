@@ -1,6 +1,5 @@
-// ✅ Replace these two values
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwb3_EIjKqmHrj9VwkGD_KAYC9SuJx8lWfZCN2ryJ1ENQbsiZNFEw8n7VEau4Obyv1G/exec";
-const WHATSAPP_NUMBER = "918004353261"; // e.g. 919277405966
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpFuyDROu0VP9utngE6qauKi85KEtxiV7ydN6q1D-fVsDppHEdRPUZVIx3JOhdJRFz/exec";
+const WHATSAPP_NUMBER = "918004353261"; // WhatsApp number without '+'
 
 document.getElementById('sendBtn').onclick = async () => {
   const name = document.getElementById('name').value.trim();
@@ -39,18 +38,20 @@ document.getElementById('sendBtn').onclick = async () => {
     submittedAt: new Date().toISOString()
   };
 
-  // ✅ Send data to Google Sheet asynchronously (non-blocking)
+  // ✅ Send data to Google Sheet
   fetch(APPS_SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).catch(err => console.error("Error sending to sheet:", err));
+  })
+  .then(res => console.log("✅ Data sent to Google Sheet"))
+  .catch(err => console.error("❌ Error sending to sheet:", err));
 
-  // ✅ Open WhatsApp instantly (no delay)
+  // ✅ WhatsApp message open
   const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address;
   const text = `🩺 New Medical Request:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n💊 Service: ${service}\n📝 Notes: ${notes}\n📍 Location: ${mapLink}`;
   
   setTimeout(() => {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
-  }, 500); // small delay for smoother experience
+  }, 500);
 };
