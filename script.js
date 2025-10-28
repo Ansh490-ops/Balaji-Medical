@@ -1,5 +1,5 @@
 // ✅ Replace these two values
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_WEBAPP_URL_HERE/exec"; 
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwb3_EIjKqmHrj9VwkGD_KAYC9SuJx8lWfZCN2ryJ1ENQbsiZNFEw8n7VEau4Obyv1G/exec";
 const WHATSAPP_NUMBER = "918004353261"; // e.g. 919277405966
 
 document.getElementById('sendBtn').onclick = async () => {
