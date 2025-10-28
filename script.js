@@ -1,5 +1,6 @@
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwb3_EIjKqmHrj9VwkGD_KAYC9SuJx8lWfZCN2ryJ1ENQbsiZNFEw8n7VEau4Obyv1G/exec" // Apps Script Web App URL
-const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
+// ✅ Replace these two values
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_WEBAPP_URL_HERE/exec"; 
+const WHATSAPP_NUMBER = "918004353261"; // e.g. 919277405966
 
 document.getElementById('sendBtn').onclick = async () => {
   const name = document.getElementById('name').value.trim();
@@ -7,31 +8,49 @@ document.getElementById('sendBtn').onclick = async () => {
   const service = document.getElementById('service').value;
   const notes = document.getElementById('notes').value.trim();
 
-  let lat="", lng="", address="";
-  if(navigator.geolocation){
-    try{
-      const pos = await new Promise((res, rej)=> navigator.geolocation.getCurrentPosition(res, rej, {timeout:10000}));
-      lat = pos.coords.latitude;
-      lng = pos.coords.longitude;
-    } catch(e){
-      address = prompt("Location denied. Please enter your address:");
-    }
-  } else {
-    address = prompt("Geolocation not supported. Please enter your address:");
+  if (!name || !phone || !service) {
+    alert("Please fill all required fields (Name, Phone, and Service).");
+    return;
   }
 
-  const payload = {name, phone, service, notes, lat, lng, address, submittedAt: new Date().toISOString()};
+  let lat = "", lng = "", address = "";
+  try {
+    if (navigator.geolocation) {
+      const pos = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
+      );
+      lat = pos.coords.latitude;
+      lng = pos.coords.longitude;
+    } else {
+      address = prompt("Geolocation not supported. Please enter your address:");
+    }
+  } catch (e) {
+    address = prompt("Couldn't fetch location. Please enter your address:");
+  }
 
-  // Send data to Google Sheet
-  await fetch(APPS_SCRIPT_URL,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
+  const payload = {
+    name,
+    phone,
+    service,
+    notes,
+    lat,
+    lng,
+    address,
+    submittedAt: new Date().toISOString()
+  };
+
+  // ✅ Send data to Google Sheet asynchronously (non-blocking)
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  });
+  }).catch(err => console.error("Error sending to sheet:", err));
 
-  // WhatsApp confirmation
-  const mapLink = (lat && lng)? `https://www.google.com/maps?q=${lat},${lng}` : address;
-  const text = `Hello, I am ${name}.\nPhone: ${phone}\nService: ${service}\nNotes: ${notes}\nLocation: ${mapLink}`;
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+  // ✅ Open WhatsApp instantly (no delay)
+  const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address;
+  const text = `🩺 New Medical Request:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n💊 Service: ${service}\n📝 Notes: ${notes}\n📍 Location: ${mapLink}`;
+  
+  setTimeout(() => {
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+  }, 500); // small delay for smoother experience
 };
