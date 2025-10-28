@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL = " https://script.google.com/macros/s/AKfycbwe8YZ0synShDa1p0-a-KIqq7VjjUwMAhK9aoQH7AQVjLhRwz-bpRCvBPYx0yuzqkN0/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe8YZ0synShDa1p0-a-KIqq7VjjUwMAhK9aoQH7AQVjLhRwz-bpRCvBPYx0yuzqkN0/exec";
 const WHATSAPP_NUMBER = "918004353261"; // WhatsApp number without '+'
 
 document.getElementById('sendBtn').onclick = async () => {
@@ -38,16 +38,14 @@ document.getElementById('sendBtn').onclick = async () => {
     submittedAt: new Date().toISOString()
   };
 
-  // ✅ Send data to Google Sheet
   fetch(APPS_SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   })
-  .then(res => console.log("✅ Data sent to Google Sheet"))
+  .then(() => console.log("✅ Data sent to Google Sheet"))
   .catch(err => console.error("❌ Error sending to sheet:", err));
 
-  // ✅ WhatsApp message open
   const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address;
   const text = `🩺 New Medical Request:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n💊 Service: ${service}\n📝 Notes: ${notes}\n📍 Location: ${mapLink}`;
   
