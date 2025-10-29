@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL ="https://script.google.com/macros/s/AKfycbyrksPu3t8xSr7xwfWzTOtEfN0aDsVehTENa7Zhx5mF6pJTT96wZYfN_0frtkA5ae_T/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrksPu3t8xSr7xwfWzTOtEfN0aDsVehTENa7Zhx5mF6pJTT96wZYfN_0frtkA5ae_T/exec";
 const WHATSAPP_NUMBER = "919277405966"; // WhatsApp number without '+'
 
 document.getElementById('sendBtn').onclick = async () => {
@@ -24,6 +24,7 @@ document.getElementById('sendBtn').onclick = async () => {
       address = prompt("Geolocation not supported. Please enter your address:");
     }
   } catch (e) {
+    console.error("Error fetching location:", e);
     address = prompt("Couldn't fetch location. Please enter your address:");
   }
 
@@ -38,13 +39,24 @@ document.getElementById('sendBtn').onclick = async () => {
     submittedAt: new Date().toISOString()
   };
 
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(() => console.log("✅ Data sent to Google Sheet"))
-  .catch(err => console.error("❌ Error sending to sheet:", err));
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+      console.log("✅ Data sent to Google Sheet");
+      alert("Your request has been successfully submitted!");
+    } else {
+      console.error("❌ Failed to send data to sheet. Response:", response);
+      alert("There was an issue submitting your request. Please try again.");
+    }
+  } catch (err) {
+    console.error("❌ Error sending to sheet:", err);
+    alert("An error occurred while submitting your request. Please check your network and try again.");
+  }
 
   const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address;
   const text = `🩺 New Medical Request:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n💊 Service: ${service}\n📝 Notes: ${notes}\n📍 Location: ${mapLink}`;
