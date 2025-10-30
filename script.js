@@ -1,5 +1,5 @@
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyaGl6vC7i8c1eI1qs_fYtzp6iBJizRFnqU4tC9JOEzQvjxPwYV414MciWMuKurAu73/exec";
-const WHATSAPP_NUMBER = "919277405966"; // WhatsApp number without '+'
+const APPS_SCRIPT_URL = "; // Apps Script Web App URL
+const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
 
 document.getElementById('sendBtn').onclick = async () => {
   const name = document.getElementById('name').value.trim();
@@ -8,25 +8,46 @@ document.getElementById('sendBtn').onclick = async () => {
   const notes = document.getElementById('notes').value.trim();
 
   if (!name || !phone || !service) {
-    alert("Please fill all required fields (Name, Phone, and Service).");
+    alert("Please fill all required fields.");
     return;
   }
 
+  // Show loading message
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = true;
+  sendBtn.textContent = "Detecting location... ⏳";
+
   let lat = "", lng = "", address = "";
-  try {
-    if (navigator.geolocation) {
+
+  if (navigator.geolocation) {
+    try {
       const pos = await new Promise((resolve, reject) =>
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000, // 10 seconds max wait
+          maximumAge: 0
+        })
       );
       lat = pos.coords.latitude;
       lng = pos.coords.longitude;
-    } else {
-      address = prompt("Geolocation not supported. Please enter your address:");
+    } catch (err) {
+      console.warn("Location error:", err);
+      if (err.code === 1) {
+        alert("❌ Location access denied. Please type your address manually.");
+      } else if (err.code === 3) {
+        alert("⌛ Location request timed out. Please try again or enter address manually.");
+      } else {
+        alert("⚠️ Location unavailable. Please enter your address manually.");
+      }
+      address = prompt("Enter your address:");
     }
-  } catch (e) {
-    console.error("Error fetching location:", e);
-    address = prompt("Couldn't fetch location. Please enter your address:");
+  } else {
+    address = prompt("Geolocation not supported. Please enter your address:");
   }
+
+  // Restore button text
+  sendBtn.disabled = false;
+  sendBtn.textContent = "Submit";
 
   const payload = {
     name,
@@ -36,32 +57,25 @@ document.getElementById('sendBtn').onclick = async () => {
     lat,
     lng,
     address,
-    submittedAt: new Date().toISOString()
+    submittedAt: new Date().toISOString(),
   };
 
+  // Send to Google Sheets
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-
-    if (response.ok) {
-      console.log("✅ Data sent to Google Sheet");
-      alert("Your request has been successfully submitted!");
-    } else {
-      console.error("❌ Failed to send data to sheet. Response:", response);
-      alert("There was an issue submitting your request. Please try again.");
-    }
   } catch (err) {
-    console.error("❌ Error sending to sheet:", err);
-    alert("An error occurred while submitting your request. Please check your network and try again.");
+    console.error("Error sending to Google Sheet:", err);
   }
 
-  const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address;
-  const text = `🩺 New Medical Request:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n💊 Service: ${service}\n📝 Notes: ${notes}\n📍 Location: ${mapLink}`;
-  
-  setTimeout(() => {
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
-  }, 500);
+  // WhatsApp confirmation link
+  const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address || "Location not provided";
+  const text = `Hello, I am ${name}.\nPhone: ${phone}\nService: ${service}\nNotes: ${notes}\nLocation: ${mapLink}`;
+
+  // WhatsApp open (same tab - faster & popup safe)
+  window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
