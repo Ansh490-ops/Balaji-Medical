@@ -22,10 +22,14 @@
 
   <script src="script.js"></script>
   <script>
-// ye code har 60 second me getData() function ko dubara run karega
-setInterval(function() {
-  getData(); // apna data fetch karne wala function yahan call karo
-}, 60000); // 60000 ms = 1 minute
-  </script>
+document.querySelector("form").addEventListener("submit", function(e) {
+  e.preventDefault(); // default submit roka
+  // yahan apna fetch() ya Apps Script URL call hota hai (data send karne ka code)
+  
+  // data bhejne ke baad ye line likh dena:
+  this.reset(); // 👈 form ko turant clear kar dega
+  alert("Form submitted successfully!"); // optional message
+});
+</script>
 </body>
 </html>
