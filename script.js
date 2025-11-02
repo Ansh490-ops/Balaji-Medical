@@ -1,4 +1,5 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZvQ83t5nzg2cFErW0x9qx6Nu9M363f3sOlKRXl-fRsStsimlyYQtzyoOqXK_q2eGm/exec";
+const DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbw5S3rwyMzqHrq48YN67Gdta6eCd2zZd3IWT3rDI5hHPmIGMOeafFeYOMbhtYaDzwC1/exec";
 const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
 
 document.getElementById('sendBtn').onclick = async () => {
@@ -46,21 +47,40 @@ document.getElementById('sendBtn').onclick = async () => {
     address = prompt("Geolocation not supported. Please enter your address:");
   }
 
-  sendBtn.disabled = false;
-  sendBtn.textContent = "Submit";
-
-  // ✅ Convert uploaded file (if any) to Base64 for sending
-  let fileBase64 = "";
+  // ✅ Upload Prescription (if selected)
+  let fileUrl = "";
   if (fileInput && fileInput.files.length > 0) {
     const file = fileInput.files[0];
-    fileBase64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    const reader = new FileReader();
+
+    const fileData = await new Promise((resolve, reject) => {
       reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
+
+    const formData = new FormData();
+    formData.append("fileName", file.name);
+    formData.append("fileData", fileData);
+    formData.append("action", "uploadPrescription");
+
+    try {
+      const res = await fetch(DRIVE_UPLOAD_URL, { method: "POST", body: formData });
+      const text = await res.text();
+      if (text.includes("Success")) {
+        fileUrl = "✅ File uploaded to Drive successfully!";
+      } else {
+        fileUrl = "❌ File upload failed.";
+      }
+    } catch (err) {
+      fileUrl = "⚠️ Error uploading file.";
+    }
   }
 
+  sendBtn.disabled = false;
+  sendBtn.textContent = "Submit";
+
+  // ✅ Prepare payload for Google Sheet
   const payload = {
     name,
     phone,
@@ -70,11 +90,11 @@ document.getElementById('sendBtn').onclick = async () => {
     lat,
     lng,
     address,
-    file: fileBase64,
+    fileUrl,
     submittedAt: new Date().toISOString(),
   };
 
-  // ✅ Send to Google Sheets
+  // ✅ Send data to Google Sheet
   try {
     await fetch(APPS_SCRIPT_URL, {
       method: "POST",
@@ -86,14 +106,15 @@ document.getElementById('sendBtn').onclick = async () => {
     console.error("Error sending to Google Sheet:", err);
   }
 
-  // ✅ WhatsApp confirmation
+  // ✅ WhatsApp confirmation message
   const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address || "Location not provided";
   const text = `Hello, I am ${name}.
 Phone: ${phone}
 Email: ${email || "Not provided"}
 Service: ${service}
 Notes: ${notes}
-Location: ${mapLink}`;
+Location: ${mapLink}
+${fileUrl}`;
 
   window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
