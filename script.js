@@ -57,7 +57,8 @@ document.getElementById('sendBtn').onclick = async () => {
     lat,
     lng,
     address,
-    Email ID 
+    Email,
+    file,
     submittedAt: new Date().toISOString(),
   };
 
