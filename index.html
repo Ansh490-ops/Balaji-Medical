@@ -10,6 +10,15 @@
   <h2>Medical Service Request</h2>
   <form id="medicalForm">
     <input id="name" placeholder="Name" required />
+    <label for="email" 
+  style="display:block; font-weight:600; margin-bottom:6px; color:#1B5E20; font-family:Arial;">
+  Email Address:
+</label>
+
+<input type="email" id="email" name="email" placeholder="Enter your email" required
+  style="width:100%; max-width:350px; padding:10px 12px; border:1px solid #66BB6A; border-radius:8px; font-size:15px; outline:none; transition:0.3s; font-family:Arial;"
+  onfocus="this.style.borderColor='#2E7D32'"
+  onblur="this.style.borderColor='#66BB6A'">
     <input id="phone" placeholder="Phone" required />
     <select id="service">
       <option value="Medicine">Order Medicine</option>
