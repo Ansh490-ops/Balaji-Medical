@@ -6,13 +6,14 @@ document.getElementById('sendBtn').onclick = async () => {
   const phone = document.getElementById('phone').value.trim();
   const service = document.getElementById('service').value;
   const notes = document.getElementById('notes').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const fileInput = document.getElementById('prescription');
 
   if (!name || !phone || !service) {
     alert("Please fill all required fields.");
     return;
   }
 
-  // Show loading message
   const sendBtn = document.getElementById('sendBtn');
   sendBtn.disabled = true;
   sendBtn.textContent = "Detecting location... ⏳";
@@ -24,7 +25,7 @@ document.getElementById('sendBtn').onclick = async () => {
       const pos = await new Promise((resolve, reject) =>
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 10000, // 10 seconds max wait
+          timeout: 10000,
           maximumAge: 0
         })
       );
@@ -45,24 +46,35 @@ document.getElementById('sendBtn').onclick = async () => {
     address = prompt("Geolocation not supported. Please enter your address:");
   }
 
-  // Restore button text
   sendBtn.disabled = false;
   sendBtn.textContent = "Submit";
+
+  // ✅ Convert uploaded file (if any) to Base64 for sending
+  let fileBase64 = "";
+  if (fileInput && fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    fileBase64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
 
   const payload = {
     name,
     phone,
+    email,
     service,
     notes,
     lat,
     lng,
     address,
-    Email,
-    file,
+    file: fileBase64,
     submittedAt: new Date().toISOString(),
   };
 
-  // Send to Google Sheets
+  // ✅ Send to Google Sheets
   try {
     await fetch(APPS_SCRIPT_URL, {
       method: "POST",
@@ -74,10 +86,14 @@ document.getElementById('sendBtn').onclick = async () => {
     console.error("Error sending to Google Sheet:", err);
   }
 
-  // WhatsApp confirmation link
+  // ✅ WhatsApp confirmation
   const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address || "Location not provided";
-  const text = `Hello, I am ${name}.\nPhone: ${phone}\nService: ${service}\nNotes: ${notes}\nLocation: ${mapLink}`;
+  const text = `Hello, I am ${name}.
+Phone: ${phone}
+Email: ${email || "Not provided"}
+Service: ${service}
+Notes: ${notes}
+Location: ${mapLink}`;
 
-  // WhatsApp open (same tab - faster & popup safe)
   window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
