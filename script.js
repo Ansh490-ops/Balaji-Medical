@@ -1,5 +1,6 @@
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZvQ83t5nzg2cFErW0x9qx6Nu9M363f3sOlKRXl-fRsStsimlyYQtzyoOqXK_q2eGm/exec";
-const DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbw5S3rwyMzqHrq48YN67Gdta6eCd2zZd3IWT3rDI5hHPmIGMOeafFeYOMbhtYaDzwC1/exec";
+// ✅ Tumhara Apps Script deployment URL (ek hi URL se dono kaam honge)
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHS8C85g1gGsWssFSO65YPFsllRZe0QvM8eRkmr3aj2EzDbXM95QLZKnKk2MO8l1EK/exec";
+const DRIVE_UPLOAD_URL = APPS_SCRIPT_URL; // same URL
 const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
 
 document.getElementById('sendBtn').onclick = async () => {
@@ -21,6 +22,7 @@ document.getElementById('sendBtn').onclick = async () => {
 
   let lat = "", lng = "", address = "";
 
+  // ✅ Location detection
   if (navigator.geolocation) {
     try {
       const pos = await new Promise((resolve, reject) =>
@@ -67,13 +69,15 @@ document.getElementById('sendBtn').onclick = async () => {
     try {
       const res = await fetch(DRIVE_UPLOAD_URL, { method: "POST", body: formData });
       const text = await res.text();
+      console.log("Upload response:", text);
       if (text.includes("Success")) {
-        fileUrl = "✅ File uploaded to Drive successfully!";
+        fileUrl = text.split("Success:")[1]?.trim() || "✅ Uploaded successfully";
       } else {
         fileUrl = "❌ File upload failed.";
       }
     } catch (err) {
       fileUrl = "⚠️ Error uploading file.";
+      console.error(err);
     }
   }
 
@@ -114,7 +118,7 @@ Email: ${email || "Not provided"}
 Service: ${service}
 Notes: ${notes}
 Location: ${mapLink}
-${fileUrl}`;
+File: ${fileUrl}`;
 
   window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
