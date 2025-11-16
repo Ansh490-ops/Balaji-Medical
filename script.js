@@ -1,6 +1,5 @@
 // ✅ Tumhara Apps Script deployment URL (ek hi URL se dono kaam honge)
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHS8C85g1gGsWssFSO65YPFsllRZe0QvM8eRkmr3aj2EzDbXM95QLZKnKk2MO8l1EK/exec";
-const DRIVE_UPLOAD_URL = APPS_SCRIPT_URL; // same URL
 const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
 
 document.getElementById('sendBtn').onclick = async () => {
@@ -9,7 +8,6 @@ document.getElementById('sendBtn').onclick = async () => {
   const service = document.getElementById('service').value;
   const notes = document.getElementById('notes').value.trim();
   const email = document.getElementById('email').value.trim();
-  const fileInput = document.getElementById('prescription');
 
   if (!name || !phone || !service) {
     alert("Please fill all required fields.");
@@ -47,38 +45,6 @@ document.getElementById('sendBtn').onclick = async () => {
     }
   } else {
     address = prompt("Geolocation not supported. Please enter your address:");
-  }
-
-  // ✅ Upload Prescription (if selected)
-  let fileUrl = "";
-  if (fileInput && fileInput.files.length > 0) {
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    const fileData = await new Promise((resolve, reject) => {
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-
-    const formData = new FormData();
-    formData.append("fileName", file.name);
-    formData.append("fileData", fileData);
-    formData.append("action", "uploadPrescription");
-
-    try {
-      const res = await fetch(DRIVE_UPLOAD_URL, { method: "POST", body: formData });
-      const text = await res.text();
-      console.log("Upload response:", text);
-      if (text.includes("Success")) {
-        fileUrl = text.split("Success:")[1]?.trim() || "✅ Uploaded successfully";
-      } else {
-        fileUrl = "❌ File upload failed.";
-      }
-    } catch (err) {
-      fileUrl = "⚠️ Error uploading file.";
-      console.error(err);
-    }
   }
 
   sendBtn.disabled = false;
