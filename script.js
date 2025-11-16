@@ -1,4 +1,4 @@
-// ✅ Tumhara Apps Script deployment URL (ek hi URL se dono kaam honge)
+// ✅ Apps Script deployment URL
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHS8C85g1gGsWssFSO65YPFsllRZe0QvM8eRkmr3aj2EzDbXM95QLZKnKk2MO8l1EK/exec";
 const WHATSAPP_NUMBER = "918004353261"; // apna WhatsApp number
 
@@ -37,7 +37,7 @@ document.getElementById('sendBtn').onclick = async () => {
       if (err.code === 1) {
         alert("❌ Location access denied. Please type your address manually.");
       } else if (err.code === 3) {
-        alert("⌛ Location request timed out. Please try again or enter address manually.");
+        alert("⌛ Location timed out. Please try again or enter address manually.");
       } else {
         alert("⚠️ Location unavailable. Please enter your address manually.");
       }
@@ -50,7 +50,7 @@ document.getElementById('sendBtn').onclick = async () => {
   sendBtn.disabled = false;
   sendBtn.textContent = "Submit";
 
-  // ✅ Prepare payload for Google Sheet
+  // ✅ Prepare payload for Google Sheet (WITHOUT fileUrl)
   const payload = {
     name,
     phone,
@@ -60,7 +60,6 @@ document.getElementById('sendBtn').onclick = async () => {
     lat,
     lng,
     address,
-    fileUrl,
     submittedAt: new Date().toISOString(),
   };
 
@@ -76,15 +75,17 @@ document.getElementById('sendBtn').onclick = async () => {
     console.error("Error sending to Google Sheet:", err);
   }
 
-  // ✅ WhatsApp confirmation message
-  const mapLink = lat && lng ? `https://www.google.com/maps?q=${lat},${lng}` : address || "Location not provided";
+  // ✅ WhatsApp confirmation message (NO file line)
+  const mapLink = (lat && lng) 
+    ? `https://www.google.com/maps?q=${lat},${lng}` 
+    : address || "Location not provided";
+
   const text = `Hello, I am ${name}.
 Phone: ${phone}
 Email: ${email || "Not provided"}
 Service: ${service}
 Notes: ${notes}
-Location: ${mapLink}
-File: ${fileUrl}`;
+Location: ${mapLink}`;
 
   window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
