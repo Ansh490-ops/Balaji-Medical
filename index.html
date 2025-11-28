@@ -7,29 +7,34 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Medical Service Request</h2>
-  <form id="medicalForm">
-    <input id="name" placeholder="Name" required />
-<input type="email" id="email" placeholder="Enter your email"/>
-    <input id="phone" placeholder="Phone" required />
-    <select id="service">
-      <option value="Medicine">Order Medicine</option>
-      <option value="Doctor">Book Doctor Appointment</option>
-      <option value="Checkup">Medical Checkup</option>
-    </select>
-    <textarea id="notes" placeholder="Notes"></textarea>
-    <button type="button" id="sendBtn">Submit</button>
-  </form>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Your Health, Our Priority</h1>
+      <p>Get medical services at your doorstep - Order medicines, book doctor appointments, or schedule checkups</p>
+    </div>
+    <div class="form-container">
+      <h2>Medical Service Request</h2>
+      <form id="medicalForm">
+        <input id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Enter your email"/>
+        <input id="phone" placeholder="Phone" required />
+        <select id="service">
+          <option value="Medicine">Order Medicine</option>
+          <option value="Doctor">Book Doctor Appointment</option>
+          <option value="Checkup">Medical Checkup</option>
+        </select>
+        <textarea id="notes" placeholder="Notes"></textarea>
+        <button type="button" id="sendBtn">Submit</button>
+      </form>
+    </div>
+  </section>
 
   <script src="script.js"></script>
   <script>
 document.querySelector("form").addEventListener("submit", function(e) {
-  e.preventDefault(); // default submit roka
-  // yahan apna fetch() ya Apps Script URL call hota hai (data send karne ka code)
-  
-  // data bhejne ke baad ye line likh dena:
-  this.reset(); // 👈 form ko turant clear kar dega
-  alert("Form submitted successfully!"); // optional message
+  e.preventDefault();
+  this.reset();
+  alert("Form submitted successfully!");
 });
 </script>
 </body>
