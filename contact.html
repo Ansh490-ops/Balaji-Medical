@@ -67,12 +67,12 @@
 
       <div class="contact-form-container">
         <h2>Send Us a Message</h2>
-        <form class="contact-form">
-          <input type="text" placeholder="Your Name" required />
-          <input type="email" placeholder="Your Email" required />
-          <input type="text" placeholder="Subject" required />
-          <textarea placeholder="Your Message" rows="5" required></textarea>
-          <button type="submit">Send Message</button>
+        <form id="contactForm" class="contact-form">
+          <input type="text" id="contactName" placeholder="Your Name" required />
+          <input type="email" id="contactEmail" placeholder="Your Email" required />
+          <input type="text" id="contactSubject" placeholder="Subject" required />
+          <textarea id="contactMessage" placeholder="Your Message" rows="5" required></textarea>
+          <button type="button" id="contactBtn">Send Message</button>
         </form>
       </div>
     </div>
@@ -109,5 +109,32 @@
       <p>&copy; 2025 Balaji Medical. All Rights Reserved.</p>
     </div>
   </footer>
+
+  <script>
+    const WHATSAPP_NUMBER = "918004353261";
+
+    document.getElementById('contactBtn').onclick = function() {
+      const name = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const subject = document.getElementById('contactSubject').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+
+      if (!name || !email || !subject || !message) {
+        alert("Please fill all the fields.");
+        return;
+      }
+
+      const text = `*New Contact Message - Balaji Medical*
+
+*From:* ${name}
+*Email:* ${email}
+*Subject:* ${subject}
+
+*Message:*
+${message}`;
+
+      window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    };
+  </script>
 </body>
 </html>
