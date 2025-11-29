@@ -481,6 +481,25 @@ button:active {
   flex-direction: column;
 }
 
+.services-page-top {
+  padding-top: 120px;
+}
+
+.about-services {
+  margin-top: 40px;
+}
+
+.about-services h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.services-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
 @media (max-width: 768px) {
   .page-hero {
     padding-top: 160px;
@@ -493,5 +512,9 @@ button:active {
   .contact-info,
   .contact-form-container {
     padding: 25px;
+  }
+  
+  .services-page-top {
+    padding-top: 100px;
   }
 }
