@@ -481,8 +481,30 @@ button:active {
   flex-direction: column;
 }
 
-.services-page-top {
-  padding-top: 120px;
+.services-hero {
+  padding-top: 100px;
+  padding-bottom: 40px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.services-hero-images {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.services-hero-images img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .about-services {
