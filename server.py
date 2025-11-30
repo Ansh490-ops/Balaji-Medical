@@ -3,6 +3,7 @@ import http.server
 import socketserver
 import mimetypes
 import os
+from pathlib import Path
 
 # Ensure correct MIME types
 mimetypes.add_type('text/plain', '.txt')
@@ -19,12 +20,15 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
     
     def guess_type(self, path):
+        # Convert to string if Path object
+        path_str = str(path)
+        
         # Ensure robots.txt is served as text/plain
-        if path.endswith('robots.txt'):
-            return 'text/plain', None
+        if path_str.endswith('robots.txt'):
+            return ('text/plain', None)
         # Ensure sitemap.xml is served as application/xml
-        if path.endswith('sitemap.xml'):
-            return 'application/xml', None
+        if path_str.endswith('sitemap.xml'):
+            return ('application/xml', None)
         return super().guess_type(path)
 
 PORT = 5000
