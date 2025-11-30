@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://balajimedical.com/sitemap.xml
+Sitemap: https://balaji-medical--anshsingh13122.replit.app/sitemap.xml
 
 User-agent: Googlebot
 Allow: /
